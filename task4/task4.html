@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style2.css">
+  <title>Document</title>
+</head>
+<body>
+<div class="container">
+<div class="card">
+<img alt="pic" class="img" id = "img" height="200" width="200">
+</div>
+<p><input type="search" name="j" id = "j" placeholder="Число1"> </p>
+<p><input type="search" name="q" id = "q" placeholder="Число2"> </p>
+<button class="btn" type="button" id = "btn">Запрашиваем данные</button>
+</div>
+</body>
+
+<script>
+
+
+const btnNode = document.querySelector('#btn')
+btnNode.addEventListener('click', () => {
+  let image = document.querySelector("#img");
+  let button = document.querySelector("#btn");
+  let width = document.querySelector('#j').value;;
+  let height = document.querySelector('#q').value;;
+  let url = `https://picsum.photos/${width}/${height}`
+  if ((width <=300 && width >= 100)&&(height <=300 && height >= 100)){
+    fetch(url)
+    .then((response) => response.blob())
+    .then((response) => {
+      img.src = URL.createObjectURL(response)
+    });
+  }else{
+    alert("Вы ввели число вне диапазона 100 - 300 или не число")
+  }
+});
+
+
+</script>
+
+
+</html>
