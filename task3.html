@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="style.css" type="text/css"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+<h1>XMLHttpRequest_2</h1>
+
+<p>
+  <div>Механизм работы приложения</div>
+  <ol>
+    <li>Создаем функцию <em>useRequest</em>, которая будет осуществлять запрос</li>
+    <li>Создаем функцию <em>displayResult</em> для сборки карточек и вставки на страницу</li>
+    <li>Ищем элементы кнопки и блока с результатом</li>
+    <li>Вешаем обработчик <em>click</em> на кнопку, который делает запрос с помощью функции <em>useRequest</em>, результат запроса выводит на страницу с помощью функции <em>displayResult</em></li>
+  </ol>
+</p>
+<p><input type="search" name="q" id = "q" placeholder="Поиск по сайту"> 
+<button class="btn j-btn-request">Запрашиваем данные</button>
+
+<div class="result j-result">Здесь будет результат запроса</div>  
+</body>
+<script>
+  /**
+  * Функция-обертка над XMLHttpRequest, осуществляющая запрос
+  * url - урл, по которому будет осуществляться запрос
+  * callback - функция, которая вызовется при успешном выполнении
+  * и первым параметром получит объект-результат запроса
+  */
+function useRequest(url, callback) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', url, true);
+  
+  xhr.onload = function() {
+    if (xhr.status != 200) {
+      console.log('Статус ответа: ', xhr.status);
+    } else {
+      const result = JSON.parse(xhr.response);
+      if (callback) {
+        callback(result);
+      }
+    }
+  };
+  
+  xhr.onerror = function() {
+    console.log('Ошибка! Статус ответа: ', xhr.status);
+  };
+  
+  xhr.send();
+};
+
+// Ищем ноду для вставки результата запроса
+const resultNode = document.querySelector('.j-result');
+// Ищем кнопку, по нажатии на которую будет запрос
+const btnNode = document.querySelector('.j-btn-request');
+
+/**
+  * Функция обработки полученного результата
+  * apiData - объект с результатом запроса
+  */
+function displayResult(apiData) {
+  let cards = '';
+  // console.log('start cards', cards);
+  
+  apiData.forEach(item => {
+    const cardBlock = `
+      <div class="card">
+        <img
+          src="${item.download_url}"
+          class="card-image"
+        />
+        <p>${item.author}</p>
+      </div>
+    `;
+    cards = cards + cardBlock;
+  });
+  
+  // console.log('end cards', cards);
+    
+  resultNode.innerHTML = cards;
+}
+
+
+btnNode.addEventListener('click', () => {
+  let value = document.querySelector('#q').value;
+  if (value <= 10 && value >= 1){
+  useRequest(`https://picsum.photos/v2/list/?limit=${value}`, displayResult);
+} else {
+  alert("Вы пытаетесь ввести не верное значение")
+}
+})
+
+</script>
+</html>
